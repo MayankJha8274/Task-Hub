@@ -13,6 +13,12 @@
       <div class="card-body">
         <h3 class="text-center mb-4">Login</h3>
 
+            <% if (locals.error && locals.error.length > 0) { %>
+                  <div style="color: red; margin-bottom: 10px;">
+                    <%= error %>
+                  </div>
+                <% } %>
+
         <form action="/auth/login" method="POST">
           <div class="mb-3">
             <label class="form-label">Email</label>

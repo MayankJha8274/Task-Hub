@@ -47,16 +47,13 @@ router.get("/login", (req, res) => {
 
 // 🔐 Login (POST /auth/login)
 router.post("/login", (req, res, next) => {
-  passport.authenticate("local", (err, user, info) => {
-    if (err) return next(err);
-    if (!user) return res.status(400).json({ message: info.message });
-
-    req.logIn(user, (err) => {
-      if (err) return next(err);
-      res.json({ message: "Logged in successfully!", user });
-    });
+  passport.authenticate("local", {
+    successRedirect: "/dashboard",
+    failureRedirect: "/auth/login",
+    failureFlash: true
   })(req, res, next);
 });
+
 
 // 🚪 Logout (GET /auth/logout)
 router.get("/logout", (req, res) => {

@@ -42,8 +42,22 @@ app.use(passport.session());
 // Flash messages (optional)
 app.use(flash());
 
+app.use((req, res, next) => {
+  res.locals.error = req.flash("error");
+  next();
+});
+
+
 // Routes
 app.use("/auth", authRoutes);
+
+const isAuthenticated = require("./middlewares/auth");
+
+// Dashboard route
+app.get("/dashboard", isAuthenticated, (req, res) => {
+  res.render("dashboard", { user: req.user });
+});
+
 
 // Root route
 app.get('/', (req, res) => {
