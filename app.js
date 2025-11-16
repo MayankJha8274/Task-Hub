@@ -51,6 +51,9 @@ app.use((req, res, next) => {
 // Routes
 app.use("/auth", authRoutes);
 
+const taskRoutes = require("./routes/tasks");
+app.use("/tasks", taskRoutes);
+
 const isAuthenticated = require("./middlewares/auth");
 
 // Dashboard route
