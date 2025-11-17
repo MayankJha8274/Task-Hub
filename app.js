@@ -20,8 +20,8 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
 // Load Models (so mongoose registers them)
-require("./models/User");
-require("./models/Task");
+require("./models/user");
+require("./models/task");
 
 // Passport Config (import your passport setup)
 require("./config/passport")(passport);
@@ -54,12 +54,15 @@ app.use("/auth", authRoutes);
 const taskRoutes = require("./routes/tasks");
 app.use("/tasks", taskRoutes);
 
+// Dashboard route
+const Task = require("./models/task");
 const isAuthenticated = require("./middlewares/auth");
 
-// Dashboard route
-app.get("/dashboard", isAuthenticated, (req, res) => {
-  res.render("dashboard", { user: req.user });
+app.get("/dashboard", isAuthenticated, async (req, res) => {
+  const tasks = await Task.find({ userId: req.user._id });
+  res.render("dashboard", { user: req.user, tasks });
 });
+
 
 
 // Root route

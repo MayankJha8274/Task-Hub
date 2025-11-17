@@ -1,7 +1,7 @@
 const express = require("express");
 const bcrypt = require("bcryptjs");
 const passport = require("passport");
-const User = require("../models/User");
+const User = require("../models/user");
 
 const router = express.Router();
 
@@ -59,7 +59,7 @@ router.post("/login", (req, res, next) => {
 router.get("/logout", (req, res) => {
   req.logout((err) => {
     if (err) return res.status(500).json({ message: "Logout failed" });
-    res.json({ message: "Logged out successfully!" });
+    res.redirect("/auth/login");
   });
 });
 

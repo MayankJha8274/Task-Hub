@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const Task = require("../models/Task");
+const Task = require("../models/task");
 const isAuthenticated = require("../middlewares/auth");
 
 // GET /tasks → Show all tasks for logged-in user
@@ -27,7 +27,7 @@ router.post("/add", isAuthenticated, async (req, res) => {
     });
 
     await newTask.save();
-    res.json({ message: "Task added successfully!" });
+    res.redirect("/dashboard");
   } catch (error) {
     res.status(500).json({ message: "Error adding task" });
   }
@@ -43,7 +43,7 @@ router.post("/:id/update", isAuthenticated, async (req, res) => {
       { title, description, completed, category, dueDate }
     );
 
-    res.json({ message: "Task updated successfully!" });
+    res.redirect("/dashboard");
   } catch (error) {
     res.status(500).json({ message: "Error updating task" });
   }
@@ -53,7 +53,7 @@ router.post("/:id/update", isAuthenticated, async (req, res) => {
 router.post("/:id/delete", isAuthenticated, async (req, res) => {
   try {
     await Task.findOneAndDelete({ _id: req.params.id, userId: req.user._id });
-    res.json({ message: "Task deleted successfully!" });
+    res.redirect("/dashboard");
   } catch (error) {
     res.status(500).json({ message: "Error deleting task" });
   }
