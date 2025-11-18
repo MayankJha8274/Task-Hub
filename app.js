@@ -12,6 +12,12 @@ connectDB();
 const app = express();
 const port = 3000;
 
+const methodOverride = require("method-override");
+app.use(methodOverride("_method"));
+
+app.use(express.static("public"));
+
+
 // View engine
 app.set("view engine", "ejs");
 

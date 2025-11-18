@@ -59,4 +59,30 @@ router.post("/:id/delete", isAuthenticated, async (req, res) => {
   }
 });
 
+// PUT /api/tasks/:id/complete → mark task completed
+router.put("/api/:id/complete", isAuthenticated, async (req, res) => {
+  try {
+    const task = await Task.findOneAndUpdate(
+      { _id: req.params.id, userId: req.user._id },
+      { completed: true },
+      { new: true }
+    );
+
+    res.json({ success: true, task });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Error completing task" });
+  }
+});
+
+// DELETE /api/tasks/:id → delete task
+router.delete("/api/:id", isAuthenticated, async (req, res) => {
+  try {
+    await Task.findOneAndDelete({ _id: req.params.id, userId: req.user._id });
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Error deleting task" });
+  }
+});
+
+
 module.exports = router;
