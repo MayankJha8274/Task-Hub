@@ -69,8 +69,6 @@ app.get("/dashboard", isAuthenticated, async (req, res) => {
   res.render("dashboard", { user: req.user, tasks });
 });
 
-
-
 // Root route
 app.get('/', (req, res) => {
   res.send('Hello World!');
