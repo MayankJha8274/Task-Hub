@@ -1,0 +1,94 @@
+/* Default Light Mode */
+body {
+  background: #f8f9fa;
+  color: #212529;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* DARK MODE */
+body.dark-mode {
+  background: #121212 !important;
+  color: #e0e0e0 !important;
+}
+
+.dark-mode .bg-light {
+  background-color: #121212 !important;
+}
+
+/* Cards */
+.dark-mode .card {
+  background: #1e1e1e;
+  color: #e0e0e0;
+  border-color: #333;
+}
+
+.dark-mode .card-body {
+  background: #1e1e1e;
+  color: #e0e0e0;
+}
+
+/* Navbar */
+.dark-mode .navbar {
+  background: #1a1a1a !important;
+}
+
+.dark-mode .navbar-brand {
+  color: #ffffff !important;
+}
+
+/* Inputs & Forms */
+.dark-mode input, 
+.dark-mode textarea, 
+.dark-mode select,
+.dark-mode .form-control,
+.dark-mode .form-select {
+  background: #2a2a2a;
+  color: #e0e0e0;
+  border-color: #444;
+}
+
+.dark-mode input::placeholder,
+.dark-mode textarea::placeholder {
+  color: #888;
+}
+
+.dark-mode input:focus, 
+.dark-mode textarea:focus,
+.dark-mode select:focus,
+.dark-mode .form-control:focus,
+.dark-mode .form-select:focus {
+  background: #333;
+  color: #fff;
+  border-color: #666;
+  box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.1);
+}
+
+/* Badges */
+.dark-mode .badge {
+  background: #333;
+  color: #fff;
+}
+
+/* Alerts */
+.dark-mode .alert-info {
+  background: #1a3a52;
+  border-color: #2e5a7d;
+  color: #a3d5ff;
+}
+
+/* Text colors */
+.dark-mode .text-muted {
+  color: #999 !important;
+}
+
+/* Buttons */
+.dark-mode .btn-dark {
+  background: #f8f9fa;
+  color: #212529;
+  border-color: #f8f9fa;
+}
+
+.dark-mode .btn-dark:hover {
+  background: #e2e6ea;
+  border-color: #dae0e5;
+}

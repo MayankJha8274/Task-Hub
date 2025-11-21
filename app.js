@@ -97,10 +97,13 @@ app.get("/dashboard", isAuthenticated, async (req, res) => {
   }
 });
 
+
 // Root route
-app.get('/', (req, res) => {
-  res.send('Hello World!');
+app.get("/", (req, res) => {
+  res.render("home", { title: "TaskHub - Home" });
 });
+
+
 
 // Start server
 app.listen(port, () => {

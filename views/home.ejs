@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TaskHub - Home</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="/css/theme.css">
+  <link rel="stylesheet" href="/css/home.css">
+</head>
+
+<body class="bg-light">
+
+  <!-- NAVBAR -->
+  <nav class="navbar navbar-dark bg-dark mb-4">
+    <div class="container">
+      <a class="navbar-brand" href="/">TaskHub</a>
+      <div class="d-flex align-items-center gap-2">
+        <button id="themeToggle" class="btn btn-outline-light btn-sm">
+          <i id="themeIcon" class="bi bi-moon"></i>
+        </button>
+        <a class="btn btn-outline-light btn-sm" href="/auth/login">Login</a>
+        <a class="btn btn-light btn-sm" href="/auth/register">Sign Up</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+    <!-- HERO SECTION -->
+    <section class="hero-section">
+      <h1 class="hero-title">Welcome to TaskHub</h1>
+      <p class="hero-subtitle">Your personal productivity space to track tasks, deadlines & priorities.</p>
+
+      <a href="/auth/login">
+        <button class="cta-btn">Get Started →</button>
+      </a>
+    </section>
+
+    <!-- FEATURES SECTION -->
+    <section class="features-section container">
+      <h2 class="mb-4">Why TaskHub?</h2>
+
+      <div class="row g-4">
+
+        <div class="col-md-4">
+          <div class="feature-card">
+            <h4>Organize Smarter</h4>
+            <p>Create tasks, set due dates, priorities, and categories with ease.</p>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="feature-card">
+            <h4>Stay Productive</h4>
+            <p>Use reminders & filters to stay on top of your workflow.</p>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="feature-card">
+            <h4>Modern Dashboard</h4>
+            <p>Track progress with a clean, minimalistic and fast UI.</p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+  </div>
+
+  <script src="/js/theme.js"></script>
+</body>
+</html>

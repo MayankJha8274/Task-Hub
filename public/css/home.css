@@ -1,0 +1,68 @@
+.hero-section {
+  height: 90vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  text-align: center;
+  padding: 40px;
+  background: linear-gradient(135deg, #6a11cb, #2575fc);
+  color: white;
+}
+
+.hero-title {
+  font-size: 3.2rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+  animation: fadeInDown 1s ease;
+}
+
+.hero-subtitle {
+  font-size: 1.3rem;
+  margin-bottom: 25px;
+  opacity: 0.9;
+  animation: fadeInUp 1.3s ease;
+}
+
+.cta-btn {
+  padding: 12px 28px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border-radius: 50px;
+  background: white;
+  color: #2575fc;
+  border: none;
+  transition: 0.3s;
+}
+
+.cta-btn:hover {
+  transform: scale(1.07);
+  background: #f0f0f0;
+}
+
+@keyframes fadeInDown {
+  from { transform: translateY(-30px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes fadeInUp {
+  from { transform: translateY(30px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.features-section {
+  padding: 70px 20px;
+  text-align: center;
+}
+
+.feature-card {
+  padding: 25px;
+  border-radius: 15px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  background: brown;
+  transition: transform 0.3s;
+}
+
+.feature-card:hover {
+  transform: translateY(-10px);
+}

@@ -5,21 +5,28 @@ const User = require("../models/user");
 
 const router = express.Router();
 
-// 🧾 Register (POST /auth/register)
+// Register (POST /auth/register)
 router.post("/register", async (req, res) => {
   const { name, email, password } = req.body;
 
+  // Validation
+  if (!name || !email || !password) {
+    req.flash("error", "All fields are required.");
+    return res.redirect("/auth/register");
+  }
+
   try {
-    // 1️⃣ Check if user already exists
+    // Check if user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res.status(400).json({ message: "User already exists" });
+      req.flash("error", "User already exists.");
+      return res.redirect("/auth/register");
     }
 
-    // 2️⃣ Hash password before saving
+    // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // 3️⃣ Create new user
+    // Create user
     const newUser = new User({
       name,
       email,
@@ -27,25 +34,29 @@ router.post("/register", async (req, res) => {
     });
 
     await newUser.save();
-    res.status(201).json({ message: "User registered successfully!" });
+
+    req.flash("success", "Registration successful! You can now log in.");
+    return res.redirect("/auth/login");
+
   } catch (error) {
     console.error("Error during registration:", error);
-    res.status(500).json({ message: "Server error" });
+    req.flash("error", "Server error. Try again later.");
+    return res.redirect("/auth/register");
   }
 });
 
-// 📄 Show Register Page
+
+// Show Register Page
 router.get("/register", (req, res) => {
   res.render("register");
 });
 
-// 📄 Show Login Page
+// Show Login Page
 router.get("/login", (req, res) => {
   res.render("login");
 });
 
-
-// 🔐 Login (POST /auth/login)
+// Login (POST /auth/login)
 router.post("/login", (req, res, next) => {
   passport.authenticate("local", {
     successRedirect: "/dashboard",
@@ -54,11 +65,14 @@ router.post("/login", (req, res, next) => {
   })(req, res, next);
 });
 
-
-// 🚪 Logout (GET /auth/logout)
+// Logout
 router.get("/logout", (req, res) => {
   req.logout((err) => {
-    if (err) return res.status(500).json({ message: "Logout failed" });
+    if (err) {
+      req.flash("error", "Logout failed.");
+      return res.redirect("/dashboard");
+    }
+    req.flash("success", "Logged out successfully.");
     res.redirect("/auth/login");
   });
 });
