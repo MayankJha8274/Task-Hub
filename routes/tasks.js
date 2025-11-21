@@ -38,9 +38,16 @@ router.post("/:id/update", isAuthenticated, async (req, res) => {
   const { title, description, completed, category, dueDate } = req.body;
 
   try {
+    const updateData = {};
+    if (title !== undefined) updateData.title = title;
+    if (description !== undefined) updateData.description = description;
+    if (completed !== undefined) updateData.completed = completed === 'true' || completed === true;
+    if (category !== undefined) updateData.category = category;
+    if (dueDate !== undefined) updateData.dueDate = dueDate;
+
     await Task.findOneAndUpdate(
       { _id: req.params.id, userId: req.user._id },
-      { title, description, completed, category, dueDate }
+      updateData
     );
 
     res.redirect("/dashboard");
