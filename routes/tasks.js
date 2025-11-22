@@ -15,14 +15,15 @@ router.get("/", isAuthenticated, async (req, res) => {
 
 // POST /tasks/add → Create new task
 router.post("/add", isAuthenticated, async (req, res) => {
-  const { title, description, category, dueDate } = req.body;
+  const { title, description, category, dueDate, reminder } = req.body;
 
   try {
     const newTask = new Task({
       title,
       description,
       category,
-      dueDate,
+      dueDate: dueDate || null,
+      reminder: reminder || null,
       userId: req.user._id
     });
 
@@ -35,7 +36,7 @@ router.post("/add", isAuthenticated, async (req, res) => {
 
 // POST /tasks/:id/update → Update task
 router.post("/:id/update", isAuthenticated, async (req, res) => {
-  const { title, description, completed, category, dueDate } = req.body;
+  const { title, description, completed, category, dueDate, reminder } = req.body;
 
   try {
     const updateData = {};
@@ -44,6 +45,10 @@ router.post("/:id/update", isAuthenticated, async (req, res) => {
     if (completed !== undefined) updateData.completed = completed === 'true' || completed === true;
     if (category !== undefined) updateData.category = category;
     if (dueDate !== undefined) updateData.dueDate = dueDate;
+    if (reminder !== undefined) {
+      updateData.reminder = reminder;
+      updateData.reminderSent = false; // Reset reminder sent status
+    }
 
     await Task.findOneAndUpdate(
       { _id: req.params.id, userId: req.user._id },
@@ -88,6 +93,34 @@ router.delete("/api/:id", isAuthenticated, async (req, res) => {
     res.json({ success: true });
   } catch (error) {
     res.status(500).json({ success: false, message: "Error deleting task" });
+  }
+});
+
+// GET /tasks/check-reminders → Check for due reminders
+router.get("/check-reminders", isAuthenticated, async (req, res) => {
+  try {
+    const now = new Date();
+    
+    // Find tasks with reminders that are due
+    const tasks = await Task.find({
+      userId: req.user._id,
+      reminder: { $lte: now },
+      reminderSent: false,
+      completed: false
+    });
+
+    // Mark reminders as sent
+    if (tasks.length > 0) {
+      await Task.updateMany(
+        { _id: { $in: tasks.map(t => t._id) } },
+        { reminderSent: true }
+      );
+    }
+
+    res.json({ reminders: tasks });
+  } catch (error) {
+    console.error("Error checking reminders:", error);
+    res.status(500).json({ error: "Error checking reminders" });
   }
 });
 

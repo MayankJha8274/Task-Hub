@@ -5,6 +5,60 @@ body {
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
+/* Navbar Improvements */
+.navbar-brand {
+  font-size: 1.4rem;
+  letter-spacing: 0.5px;
+}
+
+.nav-link {
+  font-weight: 500;
+  padding: 0.5rem 1rem !important;
+  border-radius: 5px;
+  transition: all 0.2s ease;
+  margin: 0 0.25rem;
+}
+
+.nav-link:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-1px);
+}
+
+.nav-link.active {
+  background: rgba(255, 255, 255, 0.15);
+  font-weight: 600;
+}
+
+/* Card Enhancements */
+.card {
+  border-radius: 12px;
+  border: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Dropdown Menu */
+.dropdown-menu {
+  border-radius: 10px;
+  border: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  margin-top: 0.5rem;
+}
+
+.dropdown-item {
+  padding: 0.6rem 1.2rem;
+  transition: all 0.2s ease;
+}
+
+.dropdown-item:hover {
+  background: #f8f9fa;
+  padding-left: 1.5rem;
+}
+
 /* DARK MODE */
 body.dark-mode {
   background: #121212 !important;
@@ -91,4 +145,38 @@ body.dark-mode {
 .dark-mode .btn-dark:hover {
   background: #e2e6ea;
   border-color: #dae0e5;
+}
+
+/* Dropdown in Dark Mode */
+.dark-mode .dropdown-menu {
+  background: #2a2a2a;
+  border-color: #444;
+}
+
+.dark-mode .dropdown-item {
+  color: #e0e0e0;
+}
+
+.dark-mode .dropdown-item:hover {
+  background: #333;
+  color: #fff;
+}
+
+.dark-mode .dropdown-divider {
+  border-color: #444;
+}
+
+/* Nav Links in Dark Mode */
+.dark-mode .nav-link {
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
+.dark-mode .nav-link:hover {
+  color: #fff !important;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.dark-mode .nav-link.active {
+  color: #fff !important;
+  background: rgba(255, 255, 255, 0.15);
 }

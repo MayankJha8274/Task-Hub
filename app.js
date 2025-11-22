@@ -17,6 +17,12 @@ app.use(methodOverride("_method"));
 
 app.use(express.static("public"));
 
+// Start Background Reminder Checker (runs every 60 seconds)
+const checkReminders = require("./utils/reminderChecker");
+setInterval(checkReminders, 60000); // Check every minute
+checkReminders(); // Run immediately on startup
+console.log("✅ Reminder checker started - checking every 60 seconds");
+
 
 // View engine
 app.set("view engine", "ejs");
@@ -96,6 +102,11 @@ app.get("/dashboard", isAuthenticated, async (req, res) => {
     res.status(500).send("Server error");
   }
 });
+
+// Notes routes
+const noteRoutes = require("./routes/notes");
+app.use("/notes", noteRoutes);
+
 
 
 // Root route
