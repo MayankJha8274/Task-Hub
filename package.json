@@ -19,6 +19,9 @@
     "express-session": "^1.18.2",
     "method-override": "^3.0.0",
     "mongoose": "^8.19.3",
+    "node-cron": "^4.2.1",
+    "nodemailer": "^7.0.10",
+    "openai": "^6.9.1",
     "passport": "^0.7.0",
     "passport-local": "^1.0.0"
   },

@@ -1,221 +1,681 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dashboard</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TaskHub Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-  <link rel="stylesheet" href="/css/theme.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
+
 </head>
+<body>
 
-<body class="bg-light">
-
-  <!-- NAVBAR -->
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
-    <div class="container-fluid px-4">
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container-fluid">
       <a class="navbar-brand fw-bold" href="/dashboard">
         <i class="bi bi-check2-square"></i> TaskHub
       </a>
       
-      <!-- Navigation Links -->
-      <div class="navbar-nav me-auto">
-        <a class="nav-link active" href="/dashboard">
-          <i class="bi bi-list-task"></i> Tasks
-        </a>
-        <a class="nav-link" href="/notes">
+      <div class="d-flex align-items-center gap-3">
+        <button class="btn btn-outline-secondary btn-sm" id="themeToggle" title="Toggle Dark Mode">
+          <i class="bi bi-moon-stars" id="themeIcon"></i>
+        </button>
+        
+        <a href="/notes" class="btn btn-outline-primary btn-sm">
           <i class="bi bi-journal-text"></i> Notes
         </a>
-      </div>
-      
-      <!-- User Controls -->
-      <div class="d-flex align-items-center gap-3">
-        <button id="themeToggle" class="btn btn-sm" style="background: transparent; border: none; color: #fff;">
-          <i id="themeIcon" class="bi bi-moon-stars fs-5"></i>
-        </button>
+        
         <div class="dropdown">
-          <button class="btn btn-outline-light btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+          <button class="btn btn-light btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
             <i class="bi bi-person-circle"></i> <%= user.name %>
           </button>
           <ul class="dropdown-menu dropdown-menu-end">
-            <li><a class="dropdown-item" href="/dashboard"><i class="bi bi-speedometer2"></i> Dashboard</a></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item text-danger" href="/auth/logout"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
+            <li><a class="dropdown-item" href="/auth/logout"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
           </ul>
         </div>
       </div>
     </div>
   </nav>
 
-  <div class="container">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-      <h2>Your Tasks</h2>
-
-      <div class="d-flex gap-2 align-items-center">
-        <select id="categoryFilter" class="form-select me-2" style="width:200px" onchange="applyFilters()">
-          <% categories.forEach(cat => { %>
-            <option value="<%= cat %>" <%= selectedCategory === cat ? 'selected' : '' %>>
-              <%= cat === 'all' ? 'All Categories' : cat %>
-            </option>
-          <% }) %>
-        </select>
-
-        <select id="sortFilter" class="form-select" style="width:180px" onchange="applyFilters()">
-          <option value="created_desc" <%= selectedSort === 'created_desc' ? 'selected' : '' %>>Newest</option>
-          <option value="due_asc" <%= selectedSort === 'due_asc' ? 'selected' : '' %>>Due Date ↑</option>
-          <option value="due_desc" <%= selectedSort === 'due_desc' ? 'selected' : '' %>>Due Date ↓</option>
-        </select>
-      </div>
-    </div>
-
-    <div class="card mb-4">
-      <div class="card-body">
-        <form action="/tasks/add" method="POST" class="row g-2">
-          <div class="col-sm-4">
-            <input type="text" name="title" class="form-control" placeholder="Task title" required>
+  <div class="container container-main">
+    
+    <!-- Progress Dashboard -->
+    <div class="row mb-4">
+      <div class="col-md-3 mb-3">
+        <div class="stat-card">
+          <div class="stat-icon" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+            <i class="bi bi-list-check"></i>
           </div>
-
-          <div class="col-sm-2">
-            <input type="text" name="category" class="form-control" placeholder="Category">
+          <div class="stat-info">
+            <h3><%= allTasks.length %></h3>
+            <p>Total Tasks</p>
           </div>
-
-          <div class="col-sm-2">
-            <input type="date" name="dueDate" class="form-control" placeholder="Due Date">
-          </div>
-
-          <div class="col-sm-2">
-            <input type="datetime-local" name="reminder" class="form-control" title="Set Reminder">
-          </div>
-
-          <div class="col-sm-2">
-            <button class="btn btn-dark w-100">Add Task</button>
-          </div>
-        </form>
-      </div>
-    </div>
-
-    <div class="row g-3">
-      <% if (tasks.length === 0) { %>
-        <div class="col-12">
-          <div class="alert alert-info">No tasks found.</div>
         </div>
-      <% } %>
+      </div>
+      
+      <div class="col-md-3 mb-3">
+        <div class="stat-card">
+          <div class="stat-icon" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+            <i class="bi bi-hourglass-split"></i>
+          </div>
+          <div class="stat-info">
+            <h3><%= allTasks.filter(t => !t.completed).length %></h3>
+            <p>Active Tasks</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-md-3 mb-3">
+        <div class="stat-card">
+          <div class="stat-icon" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+            <i class="bi bi-check-circle"></i>
+          </div>
+          <div class="stat-info">
+            <h3><%= allTasks.filter(t => t.completed).length %></h3>
+            <p>Completed</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-md-3 mb-3">
+        <div class="stat-card">
+          <div class="stat-icon" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
+            <i class="bi bi-graph-up"></i>
+          </div>
+          <div class="stat-info">
+            <h3><%= allTasks.length > 0 ? Math.round((allTasks.filter(t => t.completed).length / allTasks.length) * 100) : 0 %>%</h3>
+            <p>Success Rate</p>
+          </div>
+        </div>
+      </div>
+    </div>
 
-      <% tasks.forEach(task => { %>
-        <div class="col-md-6">
-          <div class="card shadow-sm">
-            <div class="card-body d-flex justify-content-between align-items-start">
+    <!-- Progress Chart -->
+    <div class="row mb-4">
+      <div class="col-md-8 mb-3">
+        <div class="chart-card">
+          <h5 class="mb-3"><i class="bi bi-bar-chart-fill"></i> Task Completion Progress</h5>
+          <div style="position: relative; height: 250px;">
+            <canvas id="taskChart"></canvas>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-md-4 mb-3">
+        <div class="chart-card">
+          <h5 class="mb-3"><i class="bi bi-pie-chart-fill"></i> Category Breakdown</h5>
+          <div style="position: relative; height: 250px;">
+            <canvas id="categoryChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AI Insights -->
+    <% if (allTasks.length > 0) { %>
+      <div class="ai-insights-card mb-4">
+        <h5 class="mb-3"><i class="bi bi-lightbulb-fill"></i> AI Insights</h5>
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <div class="insight-item">
+              <i class="bi bi-star-fill text-warning"></i>
               <div>
-                <h5 class="card-title <%= task.completed ? 'text-decoration-line-through text-muted' : '' %>">
-                  <%= task.title %>
-                </h5>
-
-                <% if (task.category) { %>
-                  <span class="badge bg-primary"><%= task.category %></span>
-                <% } %>
-
-                <% if (task.dueDate) { %>
-                  <small class="text-muted d-block mt-1">
-                    📅 Due: <%= new Date(task.dueDate).toLocaleDateString() %>
-                  </small>
-                <% } %>
-
-                <% if (task.reminder && !task.reminderSent) { %>
-                  <small class="text-warning d-block mt-1">
-                    🔔 Reminder: <%= new Date(task.reminder).toLocaleString() %>
-                  </small>
-                <% } %>
-                
-                <% if (task.reminderSent) { %>
-                  <small class="text-success d-block mt-1">
-                    ✅ Reminder sent
-                  </small>
-                <% } %>
-
-                <% if (task.description) { %>
-                  <p class="mt-2 mb-0"><%= task.description %></p>
-                <% } %>
-              </div>
-
-              <div class="btn-group-vertical ms-3">
-                <% if (!task.completed) { %>
-                  <form action="/tasks/<%= task._id %>/update" method="POST" class="mb-2">
-                    <input type="hidden" name="completed" value="true">
-                    <button class="btn btn-success btn-sm" type="submit">✔</button>
-                  </form>
+                <strong>Productivity Score</strong>
+                <p class="mb-0">You've completed <%= allTasks.filter(t => t.completed).length %> out of <%= allTasks.length %> tasks. 
+                <% if (allTasks.filter(t => t.completed).length / allTasks.length >= 0.7) { %>
+                  Great job! 🎉
+                <% } else if (allTasks.filter(t => t.completed).length / allTasks.length >= 0.4) { %>
+                  Keep going! 💪
                 <% } else { %>
-                  <button class="btn btn-outline-success btn-sm mb-2" disabled>✔</button>
+                  Let's get started! 🚀
                 <% } %>
-
-                <form action="/tasks/<%= task._id %>/delete" method="POST">
-                  <button class="btn btn-danger btn-sm" type="submit">🗑</button>
-                </form>
+                </p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="col-md-6 mb-3">
+            <div class="insight-item">
+              <i class="bi bi-calendar-check text-info"></i>
+              <div>
+                <strong>Upcoming Deadlines</strong>
+                <p class="mb-0">
+                  <% const upcomingTasks = allTasks.filter(t => t.dueDate && !t.completed && new Date(t.dueDate) >= new Date()); %>
+                  You have <%= upcomingTasks.length %> task<%= upcomingTasks.length !== 1 ? 's' : '' %> with upcoming deadlines.
+                  <% if (upcomingTasks.length > 0) { %>
+                    Stay focused! ⏰
+                  <% } %>
+                </p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="col-md-6 mb-3">
+            <div class="insight-item">
+              <i class="bi bi-exclamation-triangle text-danger"></i>
+              <div>
+                <strong>Overdue Tasks</strong>
+                <p class="mb-0">
+                  <% const overdueTasks = allTasks.filter(t => t.dueDate && !t.completed && new Date(t.dueDate) < new Date()); %>
+                  <%= overdueTasks.length %> task<%= overdueTasks.length !== 1 ? 's' : '' %> <%= overdueTasks.length !== 1 ? 'are' : 'is' %> overdue.
+                  <% if (overdueTasks.length > 0) { %>
+                    Time to catch up! 🏃
+                  <% } else { %>
+                    You're on track! ✨
+                  <% } %>
+                </p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="col-md-6 mb-3">
+            <div class="insight-item">
+              <i class="bi bi-fire text-danger"></i>
+              <div>
+                <strong>Most Active Category</strong>
+                <p class="mb-0">
+                  <% 
+                    const categoryCounts = {};
+                    allTasks.forEach(t => {
+                      if (t.category) {
+                        categoryCounts[t.category] = (categoryCounts[t.category] || 0) + 1;
+                      }
+                    });
+                    const topCategory = Object.keys(categoryCounts).sort((a, b) => categoryCounts[b] - categoryCounts[a])[0];
+                  %>
+                  <% if (topCategory) { %>
+                    "<%= topCategory %>" with <%= categoryCounts[topCategory] %> task<%= categoryCounts[topCategory] !== 1 ? 's' : '' %> 🔥
+                  <% } else { %>
+                    No categories yet. Start organizing! 📁
+                  <% } %>
+                </p>
               </div>
             </div>
           </div>
         </div>
-      <% }) %>
+      </div>
+    <% } %>
+    
+    <!-- Filter Tabs -->
+    <div class="filter-tabs-container">
+      <a href="/dashboard" class="filter-tab <%= currentFilter === 'my-day' ? 'active' : '' %>">
+        <div class="filter-icon">
+          <i class="bi bi-house-heart-fill"></i>
+        </div>
+        <div class="filter-content">
+          <span class="filter-title">My Day</span>
+          <span class="filter-count"><%= allTasks.filter(t => !t.completed).length %></span>
+        </div>
+      </a>
+      
+      <a href="/dashboard?filter=planned" class="filter-tab <%= currentFilter === 'planned' ? 'active' : '' %>">
+        <div class="filter-icon">
+          <i class="bi bi-calendar-check-fill"></i>
+        </div>
+        <div class="filter-content">
+          <span class="filter-title">Planned</span>
+          <span class="filter-count"><%= allTasks.filter(t => t.dueDate && !t.completed).length %></span>
+        </div>
+      </a>
+      
+      <a href="/dashboard?filter=completed" class="filter-tab <%= currentFilter === 'completed' ? 'active' : '' %>">
+        <div class="filter-icon">
+          <i class="bi bi-check-circle-fill"></i>
+        </div>
+        <div class="filter-content">
+          <span class="filter-title">Completed</span>
+          <span class="filter-count"><%= allTasks.filter(t => t.completed).length %></span>
+        </div>
+      </a>
+    </div>
+
+    <!-- Add Task Form -->
+    <div class="add-task-card">
+      <h5 class="mb-4"><i class="bi bi-plus-circle-fill"></i> Create New Task</h5>
+      <form action="/tasks/add" method="POST">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <input type="text" name="title" class="form-control" placeholder="What needs to be done?" required>
+          </div>
+          <div class="col-md-3">
+            <input type="text" name="category" class="form-control" placeholder="Add category">
+          </div>
+          <div class="col-md-3">
+            <button type="submit" class="btn btn-primary w-100">
+              <i class="bi bi-plus-lg"></i> Add Task
+            </button>
+          </div>
+        </div>
+        <div class="row g-3 mt-2">
+          <div class="col-md-6">
+            <label class="form-label mb-1"><i class="bi bi-calendar3"></i> Due Date</label>
+            <input type="date" name="dueDate" class="form-control">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label mb-1"><i class="bi bi-bell"></i> Remind Before (minutes)</label>
+            <input type="number" name="remindBeforeMinutes" class="form-control" placeholder="60" value="60" min="1">
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <!-- Category & Sort Filters -->
+    <div class="d-flex gap-2 mb-3">
+      <select class="form-select form-select-sm w-auto" id="categoryFilter" onchange="applyFilters()">
+        <option value="all">All Categories</option>
+        <% categories.filter(c => c !== 'all').forEach(cat => { %>
+          <option value="<%= cat %>" <%= selectedCategory === cat ? 'selected' : '' %>><%= cat %></option>
+        <% }); %>
+      </select>
+      
+      <select class="form-select form-select-sm w-auto" id="sortFilter" onchange="applyFilters()">
+        <option value="created_desc" <%= selectedSort === 'created_desc' ? 'selected' : '' %>>Newest First</option>
+        <option value="due_asc" <%= selectedSort === 'due_asc' ? 'selected' : '' %>>Due Date</option>
+      </select>
+    </div>
+
+    <!-- Task List -->
+    <% if (tasks.length === 0) { %>
+      <div class="text-center py-5">
+        <i class="bi bi-clipboard-check" style="font-size: 48px; color: #ccc;"></i>
+        <h5 class="mt-3 text-muted">No tasks found</h5>
+        <p class="text-muted">Add a task above to get started!</p>
+      </div>
+    <% } else { %>
+      <div class="row">
+        <% tasks.forEach(task => { %>
+          <div class="col-lg-6 mb-3">
+            <div class="task-card <%= task.completed ? 'completed' : '' %>">
+              <div class="d-flex gap-3">
+                
+                <!-- Checkbox -->
+                <form action="/tasks/<%= task._id %>/update" method="POST">
+                  <input type="hidden" name="completed" value="<%= !task.completed %>">
+                  <button type="submit" class="btn btn-link p-0" style="text-decoration: none;">
+                    <% if (task.completed) { %>
+                      <i class="bi bi-check-circle-fill text-success" style="font-size: 24px;"></i>
+                    <% } else { %>
+                      <i class="bi bi-circle" style="font-size: 24px; color: #adb5bd;"></i>
+                    <% } %>
+                  </button>
+                </form>
+
+                <!-- Task Content -->
+                <div class="flex-grow-1">
+                  <div class="task-title"><%= task.title %></div>
+                  
+                  <% if (task.description) { %>
+                    <p class="text-muted small mb-2"><%= task.description %></p>
+                  <% } %>
+                  
+                  <div class="task-meta">
+                    <% if (task.category) { %>
+                      <span class="badge rounded-pill" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                        <i class="bi bi-tag-fill"></i> <%= task.category %>
+                      </span>
+                    <% } %>
+                    
+                    <% if (task.dueDate) { %>
+                      <% 
+                        const dueDate = new Date(task.dueDate);
+                        const today = new Date();
+                        today.setHours(0, 0, 0, 0);
+                        const isOverdue = dueDate < today && !task.completed;
+                      %>
+                      <span class="badge rounded-pill <%= isOverdue ? 'bg-danger' : 'bg-info' %>">
+                        <i class="bi bi-calendar-check"></i> 
+                        <%= dueDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) %>
+                      </span>
+                    <% } %>
+                    
+                    <% if (task.remindBeforeMinutes && task.dueDate) { %>
+                      <span class="badge rounded-pill bg-warning text-dark">
+                        <i class="bi bi-bell-fill"></i> <%= task.remindBeforeMinutes %> min
+                      </span>
+                    <% } %>
+                    
+                    <% if (task.reminderSent) { %>
+                      <span class="badge rounded-pill bg-success">
+                        <i class="bi bi-check2"></i> Reminded
+                      </span>
+                    <% } %>
+                  </div>
+
+                  <!-- Actions -->
+                  <div class="d-flex gap-2 mt-3">
+                    <a href="/tasks/<%= task._id %>/edit" class="btn btn-sm" style="background: #f0f0f0; border: none;">
+                      <i class="bi bi-pencil-fill"></i> Edit
+                    </a>
+                    
+                    <form action="/tasks/<%= task._id %>/delete" method="POST" class="d-inline">
+                      <button type="submit" class="btn btn-sm" style="background: #ffe0e0; color: #dc3545; border: none;" onclick="return confirm('Delete this task?')">
+                        <i class="bi bi-trash-fill"></i> Delete
+                      </button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% }); %>
+      </div>
+    <% } %>
+
+  </div>
+
+  <!-- Chatbot Button -->
+  <button 
+    id="chatbotToggle" 
+    class="chatbot-float"
+    title="Chat with AI">
+    <i class="bi bi-robot"></i>
+  </button>
+
+  <!-- Chatbot Modal -->
+  <div 
+    id="chatbotModal" 
+    class="modal fade" 
+    tabindex="-1">
+    <div class="modal-dialog modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none;">
+          <h5 class="modal-title">
+            <i class="bi bi-robot"></i> AI Assistant
+          </h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body" id="chatMessages" style="max-height: 450px; overflow-y: auto; background: #f8f9fa;">
+          <div class="chat-bubble">
+            <strong>👋 Hello there!</strong><br>
+            I'm your AI assistant. I can help you manage tasks, answer questions, or just chat!
+          </div>
+        </div>
+        <div class="modal-footer" style="border-top: 2px solid #667eea;">
+          <form id="chatForm" class="w-100">
+            <div class="input-group">
+              <input type="text" id="chatInput" class="form-control" placeholder="Ask me anything..." required style="border-radius: 25px 0 0 25px;">
+              <button type="submit" class="btn btn-primary" style="border-radius: 0 25px 25px 0; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none;">
+                <i class="bi bi-send-fill"></i> Send
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
-    function applyFilters() {
-      const cat = document.getElementById("categoryFilter").value;
-      const sort = document.getElementById("sortFilter").value;
-
-      const params = new URLSearchParams();
+    // Chart.js - Task Progress Chart
+    const taskChartCtx = document.getElementById('taskChart');
+    if (taskChartCtx) {
+      const completedTasks = <%= allTasks.filter(t => t.completed).length %>;
+      const activeTasks = <%= allTasks.filter(t => !t.completed).length %>;
       
-      if (cat && cat !== "all") params.set("category", cat);
-      if (sort) params.set("sort", sort);
-
-      window.location.href = "/dashboard" + (params.toString() ? "?" + params.toString() : "");
-    }
-
-    // Request notification permission when page loads
-    if ("Notification" in window && Notification.permission === "default") {
-      Notification.requestPermission().then(permission => {
-        if (permission === "granted") {
-          console.log("✅ Notification permission granted");
+      new Chart(taskChartCtx, {
+        type: 'bar',
+        data: {
+          labels: ['Completed', 'Active'],
+          datasets: [{
+            label: 'Tasks',
+            data: [completedTasks, activeTasks],
+            backgroundColor: [
+              'rgba(67, 233, 123, 0.8)',
+              'rgba(249, 147, 251, 0.8)'
+            ],
+            borderColor: [
+              'rgba(67, 233, 123, 1)',
+              'rgba(249, 147, 251, 1)'
+            ],
+            borderWidth: 2,
+            borderRadius: 8
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: false
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: {
+                stepSize: 1
+              }
+            }
+          }
         }
       });
     }
 
-    // Check for reminders every 30 seconds
-    setInterval(checkReminders, 30000);
-    checkReminders(); // Check immediately on page load
+    // Chart.js - Category Breakdown
+    const categoryChartCtx = document.getElementById('categoryChart');
+    if (categoryChartCtx) {
+      const categoryCounts = {};
+      const tasks = <%- JSON.stringify(allTasks) %>;
+      
+      tasks.forEach(task => {
+        const cat = task.category || 'Uncategorized';
+        categoryCounts[cat] = (categoryCounts[cat] || 0) + 1;
+      });
+      
+      const labels = Object.keys(categoryCounts);
+      const data = Object.values(categoryCounts);
+      const colors = [
+        '#667eea',
+        '#764ba2',
+        '#f093fb',
+        '#43e97b',
+        '#4facfe',
+        '#f5576c',
+        '#fa709a',
+        '#fee140',
+        '#30cfd0',
+        '#a8edea'
+      ];
+      
+      new Chart(categoryChartCtx, {
+        type: 'doughnut',
+        data: {
+          labels: labels,
+          datasets: [{
+            data: data,
+            backgroundColor: colors,
+            borderColor: document.body.classList.contains('dark-mode') ? '#2d2d2d' : 'white',
+            borderWidth: 3,
+            hoverOffset: 8
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: '60%',
+          plugins: {
+            legend: {
+              position: 'right',
+              align: 'center',
+              labels: {
+                padding: 15,
+                font: {
+                  size: 13,
+                  family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
+                },
+                color: document.body.classList.contains('dark-mode') ? '#e0e0e0' : '#212529',
+                usePointStyle: true,
+                pointStyle: 'circle',
+                generateLabels: function(chart) {
+                  const data = chart.data;
+                  if (data.labels.length && data.datasets.length) {
+                    return data.labels.map((label, i) => {
+                      const dataset = data.datasets[0];
+                      const value = dataset.data[i];
+                      const total = dataset.data.reduce((a, b) => a + b, 0);
+                      const percentage = ((value / total) * 100).toFixed(1);
+                      return {
+                        text: `${label} (${value}) - ${percentage}%`,
+                        fillStyle: dataset.backgroundColor[i],
+                        hidden: false,
+                        index: i
+                      };
+                    });
+                  }
+                  return [];
+                }
+              }
+            },
+            tooltip: {
+              backgroundColor: document.body.classList.contains('dark-mode') ? '#404040' : 'white',
+              titleColor: document.body.classList.contains('dark-mode') ? '#fff' : '#212529',
+              bodyColor: document.body.classList.contains('dark-mode') ? '#e0e0e0' : '#495057',
+              borderColor: document.body.classList.contains('dark-mode') ? '#555' : '#ddd',
+              borderWidth: 1,
+              padding: 12,
+              displayColors: true,
+              callbacks: {
+                label: function(context) {
+                  const label = context.label || '';
+                  const value = context.parsed || 0;
+                  const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                  const percentage = ((value / total) * 100).toFixed(1);
+                  return `${label}: ${value} tasks (${percentage}%)`;
+                }
+              }
+            }
+          },
+          animation: {
+            animateRotate: true,
+            animateScale: true
+          }
+        }
+      });
+    }
 
+    // Dark Mode Toggle
+    const themeToggle = document.getElementById('themeToggle');
+    const themeIcon = document.getElementById('themeIcon');
+    
+    // Load saved theme
+    if (localStorage.getItem('theme') === 'dark') {
+      document.body.classList.add('dark-mode');
+      themeIcon.className = 'bi bi-sun-fill';
+    }
+    
+    themeToggle.addEventListener('click', () => {
+      document.body.classList.toggle('dark-mode');
+      const isDark = document.body.classList.contains('dark-mode');
+      themeIcon.className = isDark ? 'bi bi-sun-fill' : 'bi bi-moon-stars';
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    });
+
+    // Filter functionality
+    function applyFilters() {
+      const cat = document.getElementById("categoryFilter").value;
+      const sort = document.getElementById("sortFilter").value;
+      const urlParams = new URLSearchParams(window.location.search);
+      const currentFilter = urlParams.get('filter') || '';
+      
+      const params = new URLSearchParams();
+      if (currentFilter) params.set("filter", currentFilter);
+      if (cat && cat !== "all") params.set("category", cat);
+      if (sort) params.set("sort", sort);
+      window.location.href = "/dashboard" + (params.toString() ? "?" + params.toString() : "");
+    }
+
+    // Chatbot
+    const chatToggle = document.getElementById('chatbotToggle');
+    const chatModal = new bootstrap.Modal(document.getElementById('chatbotModal'));
+    const chatForm = document.getElementById('chatForm');
+    const chatInput = document.getElementById('chatInput');
+    const chatMessages = document.getElementById('chatMessages');
+
+    chatToggle.addEventListener('click', () => {
+      chatModal.show();
+    });
+
+    chatForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const message = chatInput.value.trim();
+      if (!message) return;
+
+      addMessage(message, true);
+      chatInput.value = '';
+      
+      const typingBubble = document.createElement('div');
+      typingBubble.className = 'chat-bubble';
+      typingBubble.innerHTML = '<em>Typing...</em>';
+      typingBubble.id = 'typing-indicator';
+      chatMessages.appendChild(typingBubble);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+
+      try {
+        const response = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message })
+        });
+        const data = await response.json();
+        document.getElementById('typing-indicator').remove();
+        addMessage(data.reply, false);
+      } catch (err) {
+        document.getElementById('typing-indicator').remove();
+        addMessage('Sorry, something went wrong! 😔', false);
+      }
+    });
+
+    function addMessage(text, isUser) {
+      const msgDiv = document.createElement('div');
+      msgDiv.className = `chat-bubble ${isUser ? 'user-msg' : ''}`;
+      msgDiv.style.float = isUser ? 'right' : 'left';
+      msgDiv.style.clear = 'both';
+      msgDiv.innerHTML = text;
+      chatMessages.appendChild(msgDiv);
+      
+      // Add clear div
+      const clearDiv = document.createElement('div');
+      clearDiv.style.clear = 'both';
+      chatMessages.appendChild(clearDiv);
+      
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    // Reminders
+    if ("Notification" in window && Notification.permission === "default") {
+      Notification.requestPermission();
+    }
+
+    setInterval(checkReminders, 30000);
+    checkReminders();
+    
     async function checkReminders() {
       try {
         const response = await fetch('/tasks/check-reminders');
         const data = await response.json();
-        
         if (data.reminders && data.reminders.length > 0) {
           data.reminders.forEach(task => {
-            // Show browser notification
             if ("Notification" in window && Notification.permission === "granted") {
-              new Notification("Task Reminder 🔔", {
+              new Notification("🔔 Task Reminder", {
                 body: `Don't forget: ${task.title}`,
-                icon: "/favicon.ico",
-                tag: task._id, // Prevents duplicate notifications
-                requireInteraction: true // Notification stays until dismissed
+                tag: task._id,
+                icon: '/favicon.ico'
               });
+            } else {
+              // Show in-app notification
+              alert(`🔔 Task Reminder: ${task.title}`);
             }
-            
-            // Log to console
-            console.log(`🔔 Reminder: ${task.title}`);
           });
-          
-          // Reload page to update reminder status
           setTimeout(() => location.reload(), 2000);
         }
       } catch (err) {
-        console.error("Error checking reminders:", err);
+        console.error(err);
       }
     }
   </script>
-
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="/js/theme.js"></script>
 
 </body>
 </html>

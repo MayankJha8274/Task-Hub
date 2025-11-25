@@ -21,17 +21,16 @@ const taskSchema = new mongoose.Schema({
   category: {
     type: String
   },
-  dueDate: {
-    type: Date
-  },
-  reminder: {
-    type: Date,
-    required: false
-  },
   reminderSent: {
-    type: Boolean,
-    default: false
-  }
+  type: Boolean,
+  default: false
+},
+remindBeforeMinutes: {
+  type: Number,
+  default: 60
+},
+dueDate: Date
+
 }, { timestamps: true });
 
 // Export model

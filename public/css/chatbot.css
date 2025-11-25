@@ -1,0 +1,57 @@
+#chatIcon {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  background: #0d6efd;
+  color: white;
+  padding: 15px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 24px;
+}
+
+#chatWindow {
+  display: none;
+  position: fixed;
+  bottom: 90px;
+  right: 30px;
+  background: white;
+  width: 300px;
+  height: 400px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px #999;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+#chatHeader {
+  background: #0d6efd;
+  color: white;
+  padding: 10px;
+  text-align: center;
+}
+
+#chatMessages {
+  flex: 1;
+  padding: 10px;
+  overflow-y: auto;
+}
+
+#chatInputArea {
+  display: flex;
+}
+
+#chatInput {
+  flex: 1;
+  border: none;
+  padding: 10px;
+  outline: none;
+}
+
+#sendBtn {
+  width: 70px;
+  background: #0d6efd;
+  color: white;
+  border: none;
+}

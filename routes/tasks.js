@@ -15,24 +15,19 @@ router.get("/", isAuthenticated, async (req, res) => {
 
 // POST /tasks/add → Create new task
 router.post("/add", isAuthenticated, async (req, res) => {
-  const { title, description, category, dueDate, reminder } = req.body;
+  const { title, category, dueDate, remindBeforeMinutes } = req.body;
 
-  try {
-    const newTask = new Task({
-      title,
-      description,
-      category,
-      dueDate: dueDate || null,
-      reminder: reminder || null,
-      userId: req.user._id
-    });
+  await Task.create({
+    title,
+    category,
+    dueDate,
+    remindBeforeMinutes,
+    userId: req.user._id
+  });
 
-    await newTask.save();
-    res.redirect("/dashboard");
-  } catch (error) {
-    res.status(500).json({ message: "Error adding task" });
-  }
+  res.redirect("/dashboard");
 });
+
 
 // POST /tasks/:id/update → Update task
 router.post("/:id/update", isAuthenticated, async (req, res) => {
@@ -60,6 +55,31 @@ router.post("/:id/update", isAuthenticated, async (req, res) => {
     res.status(500).json({ message: "Error updating task" });
   }
 });
+
+// Show Edit Form
+router.get("/:id/edit", isAuthenticated, async (req, res) => {
+  const task = await Task.findById(req.params.id);
+
+  if (!task) return res.redirect("/dashboard");
+
+  res.render("edits", { task, user: req.user, title: "Edit Task" });
+});
+
+// Update Task
+router.post("/:id/edit", isAuthenticated, async (req, res) => {
+  const { title, category, dueDate, remindBeforeMinutes, description } = req.body;
+
+  await Task.findByIdAndUpdate(req.params.id, {
+    title,
+    category,
+    dueDate,
+    remindBeforeMinutes,
+    description
+  });
+
+  res.redirect("/dashboard");
+});
+
 
 // POST /tasks/:id/delete → Delete task
 router.post("/:id/delete", isAuthenticated, async (req, res) => {
